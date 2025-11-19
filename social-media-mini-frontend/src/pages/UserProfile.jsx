@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import PostItem from "../components/PostItem";
 import Navbar from "../components/Navbar";
@@ -9,7 +9,6 @@ export default function UserProfile() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
