@@ -1,11 +1,10 @@
 import { useState } from "react";
 
-export default function NewPost({ setPosts }) {
+export default function NewPost() {
   const [text, setText] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
   const [message, setMessage] = useState("");
   const [uploadMethod, setUploadMethod] = useState("url");
-  const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
 
   const handleFileChange = (e) => {
@@ -22,8 +21,6 @@ export default function NewPost({ setPosts }) {
         setMessage("Image size must be less than 5MB");
         return;
       }
-      
-      setSelectedFile(file);
       
       // Create preview
       const reader = new FileReader();
@@ -70,7 +67,6 @@ export default function NewPost({ setPosts }) {
         setText("");
         setMediaUrl("");
         setImagePreview("");
-        setSelectedFile(null);
         setMessage("Post created ✅");
         setTimeout(() => setMessage(""), 2000);
       } else {
@@ -113,7 +109,6 @@ export default function NewPost({ setPosts }) {
                 setUploadMethod("file");
                 setMediaUrl("");
                 setImagePreview("");
-                setSelectedFile(null);
               }}
               style={{
                 padding: "6px 12px",
@@ -131,7 +126,6 @@ export default function NewPost({ setPosts }) {
               type="button"
               onClick={() => {
                 setUploadMethod("url");
-                setSelectedFile(null);
                 setImagePreview("");
               }}
               style={{
@@ -179,7 +173,6 @@ export default function NewPost({ setPosts }) {
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedFile(null);
                       setImagePreview("");
                       setMediaUrl("");
                     }}
