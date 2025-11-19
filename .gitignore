@@ -1,0 +1,115 @@
+# -------------------------------------------------------
+# OS / Editor / Temp Files
+# -------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# -------------------------------------------------------
+# Root Node / General Node Modules
+# -------------------------------------------------------
+node_modules/
+**/node_modules/
+
+# -------------------------------------------------------
+# Environment Variables (root + all microservices)
+# -------------------------------------------------------
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
+
+# -------------------------------------------------------
+# Logs
+# -------------------------------------------------------
+logs/
+*.log
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# -------------------------------------------------------
+# Build Output (Node, Angular, Microservices)
+# -------------------------------------------------------
+dist/
+build/
+tmp/
+temp/
+**/dist/
+**/build/
+**/tmp/
+**/temp/
+
+# -------------------------------------------------------
+# TypeScript Cache
+# -------------------------------------------------------
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# -------------------------------------------------------
+# React/Vite Frontend
+# -------------------------------------------------------
+social-media-mini-frontend/node_modules/
+social-media-mini-frontend/dist/
+social-media-mini-frontend/.vite/
+
+# -------------------------------------------------------
+# Microservices (Node/Express/Fastify/Nest/etc.)
+# -------------------------------------------------------
+services/api-gateway/node_modules/
+services/auth-service/node_modules/
+services/post-service/node_modules/
+services/user-service/node_modules/
+
+services/api-gateway/dist/
+services/auth-service/dist/
+services/post-service/dist/
+services/user-service/dist/
+
+# PM2 / PIDs
+*.pid
+*.pid.lock
+**/*.pid
+**/*.pid.lock
+
+# -------------------------------------------------------
+# Docker / Runtime Files
+# -------------------------------------------------------
+docker-data/
+**/docker-data/
+*.pid
+*.pid.lock
+
+# Avoid committing large archives
+*.tar
+*.zip
+*.tgz
+*.gz
+
+# -------------------------------------------------------
+# Tests / Coverage (keep coverage reports for tracking)
+# -------------------------------------------------------
+.nyc_output/
+**/.nyc_output/
+test-output/
+**/test-output/
+
+# -------------------------------------------------------
+# Cache
+# -------------------------------------------------------
+.cache/
+**/.cache/
+*.cache
+
+# -------------------------------------------------------
+# Backend (monolith - not using microservices)
+# -------------------------------------------------------
+social-media-mini-backend/

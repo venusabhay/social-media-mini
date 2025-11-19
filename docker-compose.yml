@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: social-media-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - social-media-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: social-media-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - social-media-network
+    command: redis-server --appendonly yes
+
+  # Backend Service
+  backend:
+    build:
+      context: ./social-media-mini-backend
+      dockerfile: Dockerfile
+    container_name: social-media-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://root:rootpassword@mongodb:27017/socialmedia?authSource=admin
+      - JWT_SECRET=SUPERSECRET123
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - social-media-network
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./social-media-mini-frontend
+      dockerfile: Dockerfile
+    container_name: social-media-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - social-media-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  social-media-network:
+    driver: bridge
