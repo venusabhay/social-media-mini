@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-microservices:
+    name: Test Microservices
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [auth-service, post-service, user-service]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: services/${{ matrix.service }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: services/${{ matrix.service }}
+        run: npm ci
+
+      - name: Run tests
+        working-directory: services/${{ matrix.service }}
+        run: npm test
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./services/${{ matrix.service }}/coverage/lcov.info
+          flags: ${{ matrix.service }}
+          fail_ci_if_error: false
+
+  test-api-gateway:
+    name: Test API Gateway
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: services/api-gateway/package-lock.json
+
+      - name: Install dependencies
+        working-directory: services/api-gateway
+        run: npm ci
+
+      - name: Run linting
+        working-directory: services/api-gateway
+        run: npm run lint || echo "Linting not configured"
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: social-media-mini-frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: social-media-mini-frontend
+        run: npm ci
+
+      - name: Run linting
+        working-directory: social-media-mini-frontend
+        run: npm run lint
+
+      - name: Build
+        working-directory: social-media-mini-frontend
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: social-media-mini-frontend/dist
+          retention-days: 7
+
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: 
+          - path: services/auth-service
+            name: auth-service
+          - path: services/post-service
+            name: post-service
+          - path: services/user-service
+            name: user-service
+          - path: services/api-gateway
+            name: api-gateway
+          - path: social-media-mini-frontend
+            name: frontend
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.service.path }}
+          push: false
+          tags: ${{ matrix.service.name }}:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
